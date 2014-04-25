@@ -1,0 +1,27 @@
+{
+    "name": "efusionsoft/ticket",
+    "description": "It is to manage tickets",
+    "authors": [
+        {
+            "name": "Efusionsoft",
+            "email": "amit.garg@efusionsoft.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.1.*"
+    },
+    "autoload": {
+       "classmap": [
+            "src/commands",
+            "src/controllers",
+            "src/helpers",
+            "src/migrations",
+            "src/models"
+        ],
+        "psr-0": {
+            "Efusionsoft\\Ticket\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
