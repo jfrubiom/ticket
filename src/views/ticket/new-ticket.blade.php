@@ -6,6 +6,8 @@
 <script>
 var clientMgrId = "{{$clientManager['id']}}"
 var maidMgrId = "{{$maidManager['id']}}";
+var clientCompType = {{$clientCompType}};
+var maidCompType = {{$maidCompType}};
 </script>
 
 <div class="container" id="main-container">
@@ -20,7 +22,7 @@ var maidMgrId = "{{$maidManager['id']}}";
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="form-inline">
-                                    Complaint is against :
+                                    Complaint against:
                                     
                                     <div class="form-group">
                                         <select name="complained_against_type" id="complained_against_type" class="form-control" onchange="changeBoxes(this.value)">
@@ -31,8 +33,6 @@ var maidMgrId = "{{$maidManager['id']}}";
                                      <div id="complained_against_name_div" class="form-group">
                                         <label class="sr-only" for="complained_against">complained_against</label>
                                         <input type="text"  class="form-control typehead"  id="complained_against_name" name="complained_against_name" value="" placeholder="Complaint Against " />
-                                        
-                                        
                                         <input type="hidden" name="complained_against_id" id="complained_against_id" />
                                     </div>
                                     
@@ -42,7 +42,13 @@ var maidMgrId = "{{$maidManager['id']}}";
                                         
                                         <input type="hidden" name="complained_by_id" id="compalained_by_id" />
                                     </div>
-                                    
+                                    <div class="form-group">
+                                        <label class="control-label">Complained Type</label>
+                                        <p>
+                                            <select id="complaint_type" name="complaint_type">
+                                            </select>
+                                        </p>
+                                    </div>
                                     
                                 </div>
                                 
@@ -103,6 +109,28 @@ var maidMgrId = "{{$maidManager['id']}}";
     
 </div>
 <script>
+    
+    
+     $('#create-ticket-form').submit(function(){
+        var frmData  = $(this).serialize();
+        console.log(frmData);
+        //return false;
+        $.ajax({
+            url:document.url,
+            data: $('#create-ticket-form').serialize(),
+            method:'PUT',
+            success:function(data){
+                    console.log(data);
+                    showMessage(data);
+                    if(data.status){
+                        window.location="{{URL::to('complaints')}}";
+                    }
+            }
+        });
+        return false;
+    });
+    
+    
 var maidUrl = ' {{url('suggest/users/maids')}}';
 var clientUrl = ' {{url('suggest/users/Client')}}';
  var labels, mapped;
@@ -166,15 +194,27 @@ $('#complained_by_name').typeahead(null, {
 function changeBoxes(val){
     destroyAll()
         if(val=='Maid'){
-        console.log('Maid');
-        maidCall();
-       
-    }else if(val=='Client'){
-       
+            console.log('Maid');
+            fillSelect(maidCompType);
+            maidCall();
+
+        }else if(val=='Client'){
+       fillSelect(clientCompType);
         clientCall();
     }
-    
-    
 }
+
+function fillSelect(data){
+    $('#complaint_type').html('');
+    //console.log(data);
+    var opt ='';
+    $.each(data,function(key,val ){
+        opt+='<option value="'+val+'">'+val+'</option>'
+    });
+    $('#complaint_type').html(opt);
+}
+fillSelect(maidCompType);
+$('.typeahead.input-sm').siblings('input.tt-hint').addClass('hint-small');
+$('.typeahead.input-lg').siblings('input.tt-hint').addClass('hint-large');
 </script>
 @stop

@@ -83,6 +83,18 @@ Route::group(array('before' => 'basicAuth|hasPermissions'), function()
       'as' => 'ticketDetail',
        'uses'=> 'Efusionsoft\Ticket\Controllers\SuggestController@getUsers'
    ));
+   
+   Route::get('latest-complaints',  array(
+        'as'=>'update-template',
+        'uses' => 'Efusionsoft\Ticket\Controllers\TicketController@latestTickets'
+        )
+    );
+   
+   Route::get('test-ticket',  array(
+        'as'=>'update-template',
+        'uses' => 'Efusionsoft\Ticket\Controllers\TicketController@test'
+        )
+    );
     
 });
 

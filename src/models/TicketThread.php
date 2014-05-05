@@ -23,4 +23,15 @@ class TicketThread extends \Eloquent {
          return $this->belongsTo('Ticket', 'ticket_id');
     }
     
+    /*
+     * Created by: Amit Garg
+     * Created on:5-May-2014
+     * Description:
+     *
+     */
+
+    public function commentedBy() {
+        return $this->belongsTo('User', 'commented_by_id');
+    }
+    
 }

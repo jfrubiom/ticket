@@ -8,5 +8,8 @@ class TicketStatusHistory extends \Eloquent  {
 	 * @var string
 	 */
 	protected $table = 'ticket_status_histories';
-        protected $guarded = array(); 
+        protected $guarded = array();
+        public function ticket() {
+		return $this->belongsTo('\Efusionsoft\Ticket\Models\Ticket');
+	}
 }
