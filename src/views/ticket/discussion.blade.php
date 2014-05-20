@@ -6,10 +6,17 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="form-group">
-                    <label class="control-label">Status :  </label>@if($ticket['status'][0]['status']){{$ticket['status'][0]['status']}}@endif
+                    <label class="control-label">Complaint Type:</label>{{$ticket['complaint_type']}}
                 </div>
                 <div class="form-group">
-                    <label class="control-label">{{ 'Priority : ' }}</label>@if($ticket['criticallity'][0]['criticallity']){{$ticket['criticallity'][0]['criticallity']}}@endif
+                    <?php
+                    $status = Config::get('ticket::ticket_status');
+                    $curStatus = end($ticket['status']);
+                    ?>
+                    <label class="control-label">Status :  </label>@if($curStatus['status']){{$curStatus['status']}}@endif
+                </div>
+                <div class="form-group">
+                    <label class="control-label">{{ 'Priority : ' }}</label>@if($ticket['criticallity'][0]['criticallity']){{last($ticket['criticallity'])['criticallity']}}@endif
                 </div>
 
                 <div class="form-group">
@@ -22,7 +29,7 @@
                     <label class="control-label">{{ 'Raised For : ' }}</label>{{$raisedFor->first_name}} {{$raisedFor->last_name}}
                 </div>
                 <div class="form-group">
-                    <label class="control-label">{{ 'Assigned To : ' }}</label>{{$raisedFor->first_name}} {{$raisedFor->last_name}}
+                    <label class="control-label">{{ 'Assigned To : ' }}</label>{{$assignedTo->first_name}} {{$assignedTo->last_name}}
 
                 </div>
                 <div class="form-group">
@@ -45,10 +52,7 @@
                 </div> 
                 <div class="form-group">
                     <label class="control-label">Status</label>
-                    <?php
-                    $status = Config::get('ticket::ticket_status');
-                    $curStatus = end($ticket['status']);
-                    ?>
+                    
                     <p> <select id="status" name="ticket_status">
                             @foreach($status as $crit)
                             <option value="{{$crit}}" @if($crit== $curStatus['status']) selected="selected" @endif>{{$crit}}</option>
@@ -60,16 +64,25 @@
                     <label class="control-label">Reassign To</label>
                     <p><select name="assigned_to_id" required="true">
                             @foreach($workers as $worker)
-                            <option value="{{$worker['id']}}" @if($raisedFor->id==$worker['id']) selected="selected" @endif>{{$worker['first_name']}} {{$worker['last_name']}}</option>
+                            <option value="{{$worker['id']}}" @if($assignedTo->id==$worker['id']) selected="selected" @endif>{{$worker['first_name']}} {{$worker['last_name']}}</option>
                             @endforeach
                         </select></p>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Priority</label>
+                    <?php
+                    
+                    ?>
+                    <label class="control-label">Priority </label>
                     <p><select name="criticallity" required="true">
-                            @foreach($critical as $crit)
-                            <option value="{{$crit}}" @if(!empty($ticket['criticallity'][0]['criticallity']) && $ticket['criticallity'][0]['criticallity']==$crit)  @endif >{{$crit}}</option>
-                            @endforeach
+                            
+                             @foreach($critical as $crit)
+                                        <?php
+                                        $critVal = json_decode($crit->value)
+                                        ?>
+                                        <option value="{{$critVal->title}}" @if(!empty($ticket['criticallity'][0]['criticallity']) && last($ticket['criticallity'])['criticallity']==$critVal->title) selected="selected"  @endif style="background-color: #{{$critVal->color}}">{{$critVal->title}}</option>
+                                        @endforeach
+                            
+                          
                         </select></p>
                 </div>
 
@@ -86,6 +99,7 @@
     
 $('#comment_form').submit(function(){
        var url ="{{URL::to('complaint-detail')}}/{{ $ticket['id'] }}";
+       $('#add-comment').addClass('disabled');
         $.ajax({
             url:url,
             data: $('#comment_form').serialize(),
@@ -96,6 +110,7 @@ $('#comment_form').submit(function(){
                 if(data.status){
                     //location.reload();
                     $('#dashboard-center').load(url);
+                    $('#add-comment').removeClass('disabled');
                 }
             }
         });

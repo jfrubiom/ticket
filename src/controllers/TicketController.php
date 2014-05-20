@@ -53,11 +53,12 @@ class TicketController extends BaseController {
             $generator = $ticketObj->generator;
             $raisedBy = Ticket::find($data[0]['id'])->raisedBy;
             $raisedFor = $ticketObj->raisedFor;
+            $assignedTo = $ticketObj->assignedTo;
             $threads = TicketThread::where('ticket_id', $ticketObj->id)->orderBy('id', 'desc')->get();
             //$threads = array_reverse($threads);
-            $group = Sentry::findGroupByName(Config::get('ticket::maids_group'));
-            $workers = Sentry::findAllUsersInGroup($group)->toArray();
-            $criticalArr = Config::get('ticket::critical_status'); //Priorities
+            $staffGroup = Sentry::findGroupByName(Config::get('ticket::staff_group'));
+            $workers = Sentry::findAllUsersInGroup($staffGroup)->toArray();
+            $priorities = Setting::where('entity', '=', 'complaint')->where('key', '=', 'priority')->get();
         } catch (Exception $e) { // need to check Exception class
         }
         if (Request::ajax()) {
@@ -66,7 +67,8 @@ class TicketController extends BaseController {
                         'raisedBy' => $raisedBy,
                         'threads' => $threads,
                         'workers' => $workers,
-                        'critical' => $criticalArr
+                        'critical' => $priorities,
+                        'assignedTo' => $assignedTo
             ));
         } else {
             $this->layout = View::make(Config::get('ticket::views.ticket-view'), array('ticket' => $data[0], 'gen' => $generator,
@@ -74,7 +76,8 @@ class TicketController extends BaseController {
                         'raisedBy' => $raisedBy,
                         'threads' => $threads,
                         'workers' => $workers,
-                        'critical' => $criticalArr
+                        'critical' => $priorities,
+                        'assignedTo' => $assignedTo
             ));
         }
 
@@ -250,7 +253,7 @@ class TicketController extends BaseController {
                 $ret['status'] = TRUE;
                 $ret['message'] = 'Status has updated successfully';
                 //Sending mail to the person(Client or Maid) who raised the  
-                Ticket::sendDiscussionMail($ticket->raised_by_id, $ticket->id);
+                //Ticket::sendDiscussionMail($ticket->raised_by_id, $ticket->id);
             } else {
                 $ret['message'] = 'Comment is required';
             }
@@ -405,7 +408,7 @@ class TicketController extends BaseController {
                             'comment' => Ticket::removeOldMessage($mail['message']), 'commented_by_id' => $user->id));
                         
                         //Ticket
-                        Ticket::sendDiscussionMail($ticket['assigned_to_id'], $ticketId);
+                        //Ticket::sendDiscussionMail($ticket['assigned_to_id'], $ticketId);
                          $eventArr = ['ticket_id' => $ticketId, 'created_by_id' => $user->id, 'message' => $user->first_name . ' ' . $user->last_name . ' has commented on  complaint ' . Ticket::hyperlink($ticketId) . ' through mail'];
                          TicketEventLog::create($eventArr);
                     } catch (UserNotFoundException $ex) {
@@ -537,6 +540,19 @@ class TicketController extends BaseController {
 
     public function getTicketCountByAssigneeId($assgneeId) {
         
+    }
+    
+    /*
+     * Created by: Amit Garg
+     * Created on:06-May-2014
+     * Description: To create logs of given ticket id
+     *
+     */
+
+    public function logs($ticketId) {
+       $ticketLogs = TicketEventLog::where('ticket_id',$ticketId)->get();
+       //print_r($ticketLogs);die;
+       $this->layout = View::make('ticket::ticket.logs', array('ticketId' => $ticketId, 'ticketLogs' => $ticketLogs));
     }
 
 }

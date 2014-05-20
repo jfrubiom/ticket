@@ -32,6 +32,6 @@
     'receiver_host'=>'{pop.gmail.com:995/pop3/ssl/novalidate-cert}INBOX',
     'receiver_uname'=>'efst.team@gmail.com',
     'receiver_pass'=>'radhe$2Kfourteen',
-     'latest-complaints-show-count'=>5
+    'latest-complaints-show-count'=>5
 );
    

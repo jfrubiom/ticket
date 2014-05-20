@@ -10,13 +10,8 @@
                 </div>
                 <div class="module-body ajax-content">
                     <div class="row upper-menu">
-
-
                         <div style="float:right;">
-
-
                             <a class="btn btn-info btn-new" href="{{ URL::route('addTicket') }}">{{ trans('ticket::ticket.new') }}</a>
-
                         </div>
                     </div>
                     <div class="table-responsive">

@@ -83,6 +83,11 @@ class Ticket extends \Eloquent {
     public function raisedFor() {
         return $this->belongsTo('User', 'raised_for_id');
     }
+    
+    public function assignedTo() {
+        return $this->belongsTo('User', 'assigned_to_id');
+    }
+    
 
     /*
      * Created by: Amit Garg

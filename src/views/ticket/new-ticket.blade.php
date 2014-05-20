@@ -45,7 +45,7 @@ var maidCompType = {{$maidCompType}};
                                     <div class="form-group">
                                         <label class="control-label">Complained Type</label>
                                         <p>
-                                            <select id="complaint_type" name="complaint_type">
+                                            <select id="complaint_type" class="form-control" name="complaint_type">
                                             </select>
                                         </p>
                                     </div>

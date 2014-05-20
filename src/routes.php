@@ -95,6 +95,11 @@ Route::group(array('before' => 'basicAuth|hasPermissions'), function()
         'uses' => 'Efusionsoft\Ticket\Controllers\TicketController@test'
         )
     );
+   
+    Route::get('complaint-logs/{ticket_id}', array(
+        'as' => 'update-template',
+        'uses' => 'Efusionsoft\Ticket\Controllers\TicketController@logs')
+    )->where('id', '[0-9]+');
     
 });
 
